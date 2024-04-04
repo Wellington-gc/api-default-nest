@@ -31,6 +31,16 @@ export class UserService {
     }
   }
 
+  async findByEmail(email: string) {
+    try {
+      return await this.prisma.user.findFirstOrThrow({
+        where: { email: email },
+      });
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+    }
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
       const name = updateUserDto.name;
