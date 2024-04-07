@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -9,6 +10,8 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     try {
+      const password = await bcrypt.hash(createUserDto.password, 10);
+      createUserDto.password = password;
       return await this.prisma.user.create({ data: createUserDto });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
